@@ -1,17 +1,62 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
 
 / {
     kscan {
         compatible = "zmk,kscan-gpio-direct";
         status = "okay";
-        key_a { gpios = <&gpio1 1 GPIO_ACTIVE_LOW>; };
+
+        // 你的完整按键定义
+        key_w { gpios = <&gpio1 6  GPIO_ACTIVE_LOW>; };
+        key_a { gpios = <&gpio1 1  GPIO_ACTIVE_LOW>; };
+        key_s { gpios = <&gpio1 4  GPIO_ACTIVE_LOW>; };
+        key_d { gpios = <&gpio0 11 GPIO_ACTIVE_LOW>; };
+        key_i { gpios = <&gpio0 9  GPIO_ACTIVE_LOW>; };
+        key_j { gpios = <&gpio1 15 GPIO_ACTIVE_LOW>; };
+        key_k { gpios = <&gpio0 2  GPIO_ACTIVE_LOW>; };
+        key_l { gpios = <&gpio0 29 GPIO_ACTIVE_LOW>; };
+        key_h { gpios = <&gpio1 13 GPIO_ACTIVE_LOW>; };
+        key_o { gpios = <&gpio0 10 GPIO_ACTIVE_LOW>; };
+        key_p { gpios = <&gpio1 11 GPIO_ACTIVE_LOW>; };
+        key_f1 { gpios = <&gpio1 0  GPIO_ACTIVE_LOW>; };
+        key_f3 { gpios = <&gpio0 24 GPIO_ACTIVE_LOW>; };
+        key_f7 { gpios = <&gpio0 22 GPIO_ACTIVE_LOW>; };
+        key_fn1 { gpios = <&gpio1 2  GPIO_ACTIVE_LOW>; };
+        key_fn2 { gpios = <&gpio1 7  GPIO_ACTIVE_LOW>; };
     };
 
     keymap {
         compatible = "zmk,keymap";
+
         default_layer {
-            bindings = < &kp A >;
+            bindings = <
+                &kp W &kp A &kp S &kp D
+                &kp I &kp J &kp K &kp L
+                &kp H &kp O &kp P
+                &kp F1 &kp F3 &kp F7
+                &mo 1 &mo 2
+            >;
+        };
+
+        fn_layer1 {
+            bindings = <
+                &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_CLR &kp SLEEP
+                &kp RESET &kp F1 &none &none
+                &none &none &none
+                &none &none &none
+                &none &none
+            >;
+        };
+
+        fn_layer2 {
+            bindings = <
+                &none &none &none &none
+                &none &none &none &none
+                &none &none &none
+                &none &none &none
+                &none &none
+            >;
         };
     };
 };
