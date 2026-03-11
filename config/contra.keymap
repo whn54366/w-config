@@ -1,46 +1,81 @@
-/*
- * Copyright (c) 2021 The ZMK Contributors
- *
- * SPDX-License-Identifier: MIT
- */
-
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
-
-#define DEFAULT  0
-#define NUM_MODS 1
-#define BT_CTRL  2
+#include <dt-bindings/zmk/led.h>
 
 / {
+    // ========== 核心：定义14+2个独立GPIO按键 ==========
+    kscan {
+        compatible = "zmk,kscan-gpio-direct";
+        status = "okay";
+
+        // 14个操作键 + 2个功能键（示例引脚，你替换成自己的！）
+        // 格式：按键名 { gpios = <&gpioX 引脚号 电平>; label = "按键标签"; };
+        // GPIO_ACTIVE_LOW = 按键按下时引脚接地（最常用）
+        key_x { gpios = <&gpio0 11 (GPIO_ACTIVE_LOW)>; label = "KEY_X"; };     // 轻拳
+        key_y { gpios = <&gpio0 12 (GPIO_ACTIVE_LOW)>; label = "KEY_Y"; };     // 中拳
+        key_z { gpios = <&gpio0 13 (GPIO_ACTIVE_LOW)>; label = "KEY_Z"; };     // 重拳
+        key_lshift { gpios = <&gpio0 14 (GPIO_ACTIVE_LOW)>; label = "KEY_LSHIFT"; }; // 特殊技1
+        key_fn1 { gpios = <&gpio0 15 (GPIO_ACTIVE_LOW)>; label = "KEY_FN1"; }; // 功能键1（层切换）
+
+        key_a { gpios = <&gpio0 16 (GPIO_ACTIVE_LOW)>; label = "KEY_A"; };     // 轻脚
+        key_s { gpios = <&gpio0 17 (GPIO_ACTIVE_LOW)>; label = "KEY_S"; };     // 中脚
+        key_d { gpios = <&gpio0 18 (GPIO_ACTIVE_LOW)>; label = "KEY_D"; };     // 重脚
+        key_lctrl { gpios = <&gpio0 19 (GPIO_ACTIVE_LOW)>; label = "KEY_LCTRL"; }; // 特殊技2
+        key_none1 { gpios = <&gpio0 20 (GPIO_ACTIVE_LOW)>; label = "KEY_NONE1"; }; // 空键
+
+        key_up { gpios = <&gpio1 0 (GPIO_ACTIVE_LOW)>; label = "KEY_UP"; };    // 上
+        key_down { gpios = <&gpio1 1 (GPIO_ACTIVE_LOW)>; label = "KEY_DOWN"; }; // 下
+        key_left { gpios = <&gpio1 2 (GPIO_ACTIVE_LOW)>; label = "KEY_LEFT"; }; // 左
+        key_right { gpios = <&gpio1 3 (GPIO_ACTIVE_LOW)>; label = "KEY_RIGHT"; }; // 右
+        key_space { gpios = <&gpio1 4 (GPIO_ACTIVE_LOW)>; label = "KEY_SPACE"; }; // 闪避
+
+        key_tab { gpios = <&gpio1 5 (GPIO_ACTIVE_LOW)>; label = "KEY_TAB"; };   // 爆气
+        key_esc { gpios = <&gpio1 6 (GPIO_ACTIVE_LOW)>; label = "KEY_ESC"; };   // 挑衅
+        key_q { gpios = <&gpio1 7 (GPIO_ACTIVE_LOW)>; label = "KEY_Q"; };       // 连招1
+        key_w { gpios = <&gpio1 8 (GPIO_ACTIVE_LOW)>; label = "KEY_W"; };       // 连招2
+        key_fn2 { gpios = <&gpio1 9 (GPIO_ACTIVE_LOW)>; label = "KEY_FN2"; };   // 功能键2（层切换）
+    };
+
+    // ========== 格斗键位映射（和之前一致）==========
     keymap {
         compatible = "zmk,keymap";
 
         default_layer {
             bindings = <
-    &kp ESC   &kp Q     &kp W    &kp E     &kp R       &kp T      &kp Y     &kp U        &kp I     &kp O     &kp P    &kp BSPC
-    &kp TAB   &kp A     &kp S    &kp D     &kp F       &kp G      &kp H     &kp J        &kp K     &kp L     &kp SEMI &kp SQT
-    &kp LSHFT &kp Z     &kp X    &kp C     &kp V       &kp B      &kp N     &kp M        &kp COMMA &kp DOT   &kp FSLH &kp ENTER
-    &kp LCTRL &kp LGUI  &kp LALT &kp BSLH  &to DEFAULT &kp SPACE  &trans    &to NUM_MODS &kp LEFT  &kp RIGHT &kp UP   &kp DOWN
+                // 对应上面定义的按键：key_x → &kp X，以此类推
+                &kp X    &kp Y    &kp Z    &kp LSHIFT  &mo 1
+                &kp A    &kp S    &kp D    &kp LCTRL   &none
+                &kp UP   &kp DOWN &kp LEFT &kp RIGHT   &kp SPACE
+                &kp TAB  &kp ESC  &kp Q    &kp W       &mo 2
             >;
         };
 
-        num_mods {
+        fn1_layer {
             bindings = <
-    &kp GRAVE &kp N1    &kp N2   &kp N3   &kp N4      &kp N5     &kp N6    &kp N7      &kp N8    &kp N9    &kp N0   &kp DEL
-    &kp TAB   &kp F1    &kp F2   &kp F3   &kp F4      &kp F5     &kp F6    &kp MINUS   &kp PG_UP &kp LBKT  &kp RBKT &kp BSLH
-    &kp LSHFT &kp F7    &kp F8   &kp F9   &kp F10     &kp F11    &kp F12   &kp EQUAL   &kp PG_DN &kp HOME  &kp END  &kp ENTER
-    &kp LCTRL &kp LGUI  &kp LALT &sys_reset   &to DEFAULT &kp SPACE  &trans    &mo BT_CTRL &kp LEFT  &kp RIGHT &kp UP   &kp DOWN
+                &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_CLR &kp SLEEP &none
+                &kp RESET &kp F1   &none    &none     &none
+                &none     &none    &none    &none     &none
+                &none &none &none &none &none
             >;
         };
 
-        bt_control {
+        fn2_layer {
             bindings = <
-    &bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &trans    &trans    &trans     &trans     &trans   &trans
-    &trans     &trans       &trans       &trans       &trans       &trans       &trans    &trans    &trans     &trans     &trans   &trans
-    &trans     &trans       &trans       &trans       &trans       &trans       &trans    &trans    &trans     &trans     &trans   &trans
-    &trans     &trans       &trans       &trans       &trans       &trans       &trans    &trans    &bt BT_PRV &bt BT_NXT &trans   &trans
+                &none &none &none &none &none
+                &none &none &none &none &none
+                &none &none &none &none &none
+                &none &none &none &none &none
             >;
         };
+    };
+
+    // ========== I2C LED 基础配置（先保留，按键能用后再调效果）==========
+    i2c0 {
+        compatible = "nordic,nrf-twi";
+        sda-pin = <17>;
+        scl-pin = <20>;
+        clock-frequency = <400000>;
+        status = "okay";
     };
 };
