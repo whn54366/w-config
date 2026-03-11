@@ -1,7 +1,6 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
-#include <dt-bindings/display.h>
 
 / {
     // 核心：GPIO 直接按键定义（1:1 匹配你的硬件）
@@ -32,25 +31,22 @@
         key_fn2 { gpios = <&gpio1 7  (GPIO_ACTIVE_LOW)>; label = "KEY_FN2"; };
     };
 
-    // 按键映射（参考 Contra 的简洁布局）
+    // 按键映射
     keymap {
         compatible = "zmk,keymap";
 
-        // 层0：默认层（WASD + 操作键 + 功能键）
+        // 层0：默认层
         default_layer {
             bindings = <
-                // 第一行：WASD
                 &kp W &kp A &kp S &kp D
-                // 第二行：IJKL + HOP
                 &kp I &kp J &kp K &kp L
                 &kp H &kp O &kp P
-                // 第三行：功能键 + 层切换
                 &kp F1 &kp F3 &kp F7
                 &mo 1 &mo 2
             >;
         };
 
-        // 层1：功能层（长按 P1.02 触发）- 蓝牙/重置
+        // 层1：功能层（蓝牙/重置）
         fn_layer1 {
             bindings = <
                 &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_CLR &kp SLEEP
@@ -61,7 +57,7 @@
             >;
         };
 
-        // 层2：备用层（长按 P1.07 触发）- 可自定义
+        // 层2：备用层
         fn_layer2 {
             bindings = <
                 &none &none &none &none
@@ -71,51 +67,5 @@
                 &none &none
             >;
         };
-    };
-
-    // ========== SSD1306 OLED 设备树配置 ==========
-    i2c0 {
-        compatible = "nordic,nrf-twi";
-        sda-pin = <17>;
-        scl-pin = <20>;
-        clock-frequency = <400000>;
-        status = "okay";
-
-        ssd1306: ssd1306@3c {
-            compatible = "solomon,ssd1306";
-            reg = <0x3c>;
-            status = "okay";
-            width = <128>;
-            height = <64>;
-            segment-offset = <0>;
-            com-offset = <0>;
-            com-invert;
-            alt-com;
-            display-on;
-        };
-    };
-
-    // OLED 显示内容
-    display {
-        compatible = "zmk,display";
-        status = "okay";
-        display = <&ssd1306>;
-        widgets = <&layer_status &bt_status &battery_status>;
-    };
-
-    layer_status {
-        compatible = "zmk,widget-layer-status";
-        label = "LAYER_STATUS";
-        layer-names = "Default", "Fn1", "Fn2";
-    };
-
-    bt_status {
-        compatible = "zmk,widget-bt-status";
-        label = "BT_STATUS";
-    };
-
-    battery_status {
-        compatible = "zmk,widget-battery-status";
-        label = "BATTERY_STATUS";
     };
 };
