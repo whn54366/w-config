@@ -1,19 +1,170 @@
-/* 按键映射：P0.17=A, P0.2=B, P0.3=C, P0.31=D */
+/*
+ * NICE!NANO V2 14+2键格斗键盘 + I2C LED 配置
+ * I2C管脚：SDA=P1.00(17)、SCL=P0.13(20)
+ * LED效果：层0(格斗层)=红色 | 层1(功能层)=蓝色 | 按键按下闪灯
+ */
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/led.h>
 
 / {
+    // ========== 1. I2C 总线配置（核心：指定17/20管脚） ==========
+    i2c0 {
+        compatible = "nordic,nrf-twi";
+        sda-pin = <17>;  // 对应NICE!NANO V2的17脚（P1.00）
+        scl-pin = <20>;  // 对应NICE!NANO V2的20脚（P0.13）
+        clock-frequency = <400000>; // I2C高速模式（400kHz）
+        status = "okay";
+    };
+
+    // ========== 2. I2C LED 驱动 + 效果配置（格斗键盘实用效果） ==========
+    // 适配通用I2C LED（如PCA9685驱动的LED/WS2812 I2C桥）
+    leds {
+        compatible = "zmk,leds";
+        status = "okay";
+
+        // LED 1：层指示灯（格斗层/功能层区分）
+        led_layer: led_layer {
+            label = "LED_LAYER_INDICATOR";
+            gpios = <&i2c0 0x20 0>; // I2C设备地址0x20（根据你的LED模块修改）
+            default-state = "off";
+        };
+
+        // LED 2：按键反馈灯（按下按键闪灯）
+        led_feedback: led_feedback {
+            label = "LED_KEY_FEEDBACK";
+            gpios = <&i2c0 0x20 1>; // 第二个LED通道
+            default-state = "off";
+        };
+    };
+
+    // LED 行为：层切换自动变色 + 按键触发闪灯
+    behaviors {
+        // 层指示：层0(格斗)亮红，层1(功能)亮蓝，层2灭
+        led_layer_behavior: led_layer_behavior {
+            compatible = "zmk,behavior-led-layer";
+            label = "LED_LAYER_BEHAVIOR";
+            #binding-cells = <0>;
+            layer-leds = <
+                0 &led_layer RED    // 层0：红色
+                1 &led_layer BLUE   // 层1：蓝色
+                2 &led_layer OFF    // 层2：关闭
+            >;
+        };
+
+        // 按键反馈：按下按键闪灯（格斗操作可视化）
+        led_key_feedback: led_key_feedback {
+            compatible = "zmk,behavior-led-toggle";
+            label = "LED_KEY_FEEDBACK";
+            #binding-cells = <0>;
+            led = <&led_feedback>;
+            trigger-on-press;    // 按下触发亮灯
+            trigger-on-release;  // 松开触发灭灯
+            flash-duration-ms = <50>; // 闪灯50ms（不影响格斗操作）
+        };
+    };
+
+    // ========== 3. 保留之前的格斗键盘优化配置 ==========
+    debounce {
+        compatible = "zmk,debounce";
+        debounce-period-ms = <5>;
+    };
+
+    scan-timing {
+        compatible = "zmk,scan-timing";
+        scan-period-ms = <1>;
+    };
+
+    power {
+        compatible = "zmk,power-settings";
+        idle-timeout-ms = <300000>;
+        sleep-on-bluetooth-disconnect;
+    };
+
+    bluetooth {
+        compatible = "zmk,bluetooth";
+        le-power-mode = "low_power";
+        conn-interval-ms = <20>;
+    };
+
+    // ========== 4. 14+2键映射（整合LED效果） ==========
     keymap {
         compatible = "zmk,keymap";
 
         default_layer {
             bindings = <
-                &kp A  /* P0.17 (显示屏IO) */
-                &kp B  /* P0.2 */
-                &kp C  /* P0.3 */
-                &kp D  /* P0.31 (空引脚) */
+                // 第一行：轻拳 中拳 重拳 特殊技1 【层切换】 + LED层指示
+                &kp X    &kp Y    &kp Z    &kp LSHIFT  &mo 1
+                // 第二行：轻脚 中脚 重脚 特殊技2  空 + 按键反馈
+                &kp A    &kp S    &kp D    &kp LCTRL   &led_key_feedback
+                // 第三行：上 下 左 右 闪避 + 按键反馈
+                &kp UP   &kp DOWN &kp LEFT &kp RIGHT   &led_key_feedback
+                // 第四行：爆气 挑衅 连招1 连招2 【层切换+宏】
+                &kp TAB  &kp ESC  &kp Q    &kp W       &gh_tap_hold &kp R &mo 2
             >;
-            sensor-bindings = <>;
+            // 默认层启用层指示LED
+            led-behavior = <&led_layer_behavior>;
+        };
+
+        fn1_layer {
+            bindings = <
+                &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_CLR &kp SLEEP &none
+                &kp RESET &kp F1   &none    &none     &none
+                &none     &none    &none    &none     &none
+                &macro_hadouken &macro_shoryuken &none &none &none
+            >;
+            // 功能层启用层指示LED
+            led-behavior = <&led_layer_behavior>;
+        };
+
+        fn2_layer {
+            bindings = <
+                &none &none &none &none &none
+                &none &none &none &none &none
+                &none &none &none &none &none
+                &none &none &none &none &none
+            >;
+            led-behavior = <&led_layer_behavior>;
+        };
+    };
+
+    // ========== 5. 格斗宏（保留之前的示例） ==========
+    behaviors {
+        gh_tap_hold: gh_tap_hold {
+            compatible = "zmk,behavior-tap-hold";
+            label = "GH_TAP_HOLD";
+            #binding-cells = <2>;
+            tapping-term-ms = <120>;
+            quick-tap-ms = <80>;
+            repeat-precision-ms = <10>;
+        };
+
+        macro_hadouken: macro_hadouken {
+            compatible = "zmk,behavior-macro";
+            label = "MACRO_HADOUKEN";
+            #binding-cells = <0>;
+            macros = <
+                &macro_press DOWN &macro_delay 20
+                &macro_press RIGHT &macro_delay 20
+                &macro_press Z &macro_delay 10
+                &macro_release Z &macro_release RIGHT &macro_release DOWN
+            >;
+            delay-ms = <15>;
+        };
+
+        macro_shoryuken: macro_shoryuken {
+            compatible = "zmk,behavior-macro";
+            label = "MACRO_SHORYUKEN";
+            #binding-cells = <0>;
+            macros = <
+                &macro_press RIGHT &macro_delay 15
+                &macro_press DOWN &macro_delay 15
+                &macro_press RIGHT &macro_delay 15
+                &macro_press X &macro_delay 10
+                &macro_release X &macro_release RIGHT &macro_release DOWN
+            >;
+            delay-ms = <15>;
         };
     };
 };
