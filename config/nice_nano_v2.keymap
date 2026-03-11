@@ -7,23 +7,23 @@
         compatible = "zmk,kscan-gpio-direct";
         status = "okay";
 
-        // 你的完整按键定义
-        key_w { gpios = <&gpio1 6  GPIO_ACTIVE_LOW>; };
-        key_a { gpios = <&gpio1 1  GPIO_ACTIVE_LOW>; };
-        key_s { gpios = <&gpio1 4  GPIO_ACTIVE_LOW>; };
-        key_d { gpios = <&gpio0 11 GPIO_ACTIVE_LOW>; };
-        key_i { gpios = <&gpio0 9  GPIO_ACTIVE_LOW>; };
-        key_j { gpios = <&gpio1 15 GPIO_ACTIVE_LOW>; };
-        key_k { gpios = <&gpio0 2  GPIO_ACTIVE_LOW>; };
-        key_l { gpios = <&gpio0 29 GPIO_ACTIVE_LOW>; };
-        key_h { gpios = <&gpio1 13 GPIO_ACTIVE_LOW>; };
-        key_o { gpios = <&gpio0 10 GPIO_ACTIVE_LOW>; };
-        key_p { gpios = <&gpio1 11 GPIO_ACTIVE_LOW>; };
-        key_f1 { gpios = <&gpio1 0  GPIO_ACTIVE_LOW>; };
-        key_f3 { gpios = <&gpio0 24 GPIO_ACTIVE_LOW>; };
-        key_f7 { gpios = <&gpio0 22 GPIO_ACTIVE_LOW>; };
-        key_fn1 { gpios = <&gpio1 2  GPIO_ACTIVE_LOW>; };
-        key_fn2 { gpios = <&gpio1 7  GPIO_ACTIVE_LOW>; };
+        // 你的完整按键定义（所有 flags 都加了括号！）
+        key_w   { gpios = <&gpio1 6  (GPIO_ACTIVE_LOW)>; };
+        key_a   { gpios = <&gpio1 1  (GPIO_ACTIVE_LOW)>; };
+        key_s   { gpios = <&gpio1 4  (GPIO_ACTIVE_LOW)>; };
+        key_d   { gpios = <&gpio0 11 (GPIO_ACTIVE_LOW)>; };
+        key_i   { gpios = <&gpio0 9  (GPIO_ACTIVE_LOW)>; };
+        key_j   { gpios = <&gpio1 15 (GPIO_ACTIVE_LOW)>; };
+        key_k   { gpios = <&gpio0 2  (GPIO_ACTIVE_LOW)>; };
+        key_l   { gpios = <&gpio0 29 (GPIO_ACTIVE_LOW)>; };
+        key_h   { gpios = <&gpio1 13 (GPIO_ACTIVE_LOW)>; };
+        key_o   { gpios = <&gpio0 10 (GPIO_ACTIVE_LOW)>; };
+        key_p   { gpios = <&gpio1 11 (GPIO_ACTIVE_LOW)>; };
+        key_f1  { gpios = <&gpio1 0  (GPIO_ACTIVE_LOW)>; };
+        key_f3  { gpios = <&gpio0 24 (GPIO_ACTIVE_LOW)>; };
+        key_f7  { gpios = <&gpio0 22 (GPIO_ACTIVE_LOW)>; };
+        key_fn1 { gpios = <&gpio1 2  (GPIO_ACTIVE_LOW)>; };
+        key_fn2 { gpios = <&gpio1 7  (GPIO_ACTIVE_LOW)>; };
     };
 
     keymap {
