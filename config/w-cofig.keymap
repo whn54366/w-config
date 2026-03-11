@@ -1,104 +1,19 @@
-/*
- * 格斗键盘专属映射 - 无矩阵/独立IO版
- * 适配：Nice!Nano V2，17/20接屏幕，2.3/31空，其余IO映射A/B/C/D...
- */
+/* 按键映射：P0.17=A, P0.2=B, P0.3=C, P0.31=D */
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/bt.h>
-
-// 层别名定义
-#define DEFAULT  0    // 层0：默认字母层（A/B/C/D...）
-#define FN_LAYER 1    // 层1：功能层（数字/连招/重置）
-#define BT_CTRL  2    // 层2：蓝牙控制层
 
 / {
-    // 自定义行为：长按激活蓝牙层（短按无动作）
-    behaviors {
-        bt_hold: bt_hold {
-            compatible = "zmk,behavior-hold-tap";
-            label = "BT_HOLD";
-            #binding-cells = <0>;
-            tapping-term-ms = <150>;  // 格斗键盘缩短触发时间
-            quick-tap-ms = <80>;
-            bindings = <&trans>, <&mo BT_CTRL>;  // 短按透传，长按激活蓝牙层
-        };
-    };
-
     keymap {
         compatible = "zmk,keymap";
 
-        // 层0：默认层（独立IO映射字母A/B/C/D/E/F/G/H）
         default_layer {
             bindings = <
-    // 第一行：IO映射A/B/C/D（对应独立引脚）
-    &kp A     &kp B     &kp C     &kp D     &trans    &trans    &trans    &trans
-    // 第二行：IO映射E/F/G/H（对应独立引脚）
-    &kp E     &kp F     &kp G     &kp H     &trans    &trans    &trans    &trans
-    // 第三行：方向键+层切换（独立IO）
-    &kp UP    &kp DOWN  &kp LEFT  &kp RIGHT &to FN_LAYER &trans    &trans    &trans
-    // 第四行：功能键+蓝牙触发（独立IO）
-    &kp SPACE &kp ESC   &kp LSHFT &kp LCTL  &bt_hold   &trans    &trans    &trans
+                &kp A  /* P0.17 (显示屏IO) */
+                &kp B  /* P0.2 */
+                &kp C  /* P0.3 */
+                &kp D  /* P0.31 (空引脚) */
             >;
-        };
-
-        // 层1：功能层（数字/连招/重置）
-        fn_layer {
-            bindings = <
-    // 第一行：数字键（对应默认层A/B/C/D）
-    &kp N1    &kp N2    &kp N3    &kp N4    &trans    &trans    &trans    &trans
-    // 第二行：数字键（对应默认层E/F/G/H）
-    &kp N5    &kp N6    &kp N7    &kp N8    &trans    &trans    &trans    &trans
-    // 第三行：连招宏+返回默认层（可自定义）
-    &hadouken &shoryuken &trans    &trans    &to DEFAULT &trans    &trans    &trans
-    // 第四行：系统重置+功能键
-    &sys_reset &kp DEL   &kp LALT  &kp LGUI  &trans    &trans    &trans    &trans
-            >;
-        };
-
-        // 层2：蓝牙控制层（长按bt_hold激活）
-        bt_control {
-            bindings = <
-    // 第一行：蓝牙设备切换/清空
-    &bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &trans    &trans    &trans    &trans
-    // 第二行：透传（无动作）
-    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
-    // 第三行：透传
-    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
-    // 第四行：蓝牙上/下一个设备
-    &bt BT_PRV &bt BT_NXT &trans    &trans    &trans    &trans    &trans    &trans
-            >;
-        };
-    };
-
-    // 自定义连招宏（格斗键盘专属）
-    behaviors {
-        // 波动拳：下 → 前 → 轻拳（A）
-        hadouken: hadouken {
-            compatible = "zmk,behavior-macro";
-            label = "HADOUKEN";
-            #binding-cells = <0>;
-            wait-ms = <50>;  // 连招间隔（可微调）
-            tap-ms = <100>;
-            bindings = <
-                &macro_tap &kp DOWN,
-                &macro_tap &kp RIGHT,
-                &macro_tap &kp A
-            >;
-        };
-
-        // 升龙拳：前 → 下 → 前+重拳（B）
-        shoryuken: shoryuken {
-            compatible = "zmk,behavior-macro";
-            label = "SHORYUKEN";
-            #binding-cells = <0>;
-            wait-ms = <50>;
-            tap-ms = <100>;
-            bindings = <
-                &macro_tap &kp RIGHT,
-                &macro_tap &kp DOWN,
-                &macro_tap &kp RIGHT,
-                &macro_tap &kp B
-            >;
+            sensor-bindings = <>;
         };
     };
 };

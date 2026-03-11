@@ -1,0 +1,40 @@
+/* 适配 nice_nano_v2 (nRF52840)，定义按键+显示屏IO */
+&pinctrl {
+    key_matrix_default: key_matrix_default {
+        group1 {
+            psels = <NRF_PSEL(GPIO, 0, 17)>,  /* 按键1: P0.17 (接显示屏的IO，暂用作按键测试) */
+                    <NRF_PSEL(GPIO, 0, 2)>,   /* 按键2: P0.2 */
+                    <NRF_PSEL(GPIO, 0, 3)>,   /* 按键3: P0.3 */
+                    <NRF_PSEL(GPIO, 0, 31)>;  /* 按键4: P0.31 (空引脚，用作按键测试) */
+        };
+    };
+};
+
+/* 按键矩阵定义（单列单行，简化测试） */
+/ {
+    keymap {
+        compatible = "zmk,keymap";
+        label = "Key Test Keymap";
+    };
+
+    key_matrix: key-matrix {
+        compatible = "zmk,key-matrix";
+        label = "Key Matrix";
+        rows = <1>;
+        columns = <4>;
+        row-gpios = <&gpio0 0 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>; /* 占位行，仅用列引脚 */
+        col-gpios = <&gpio0 17 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
+                    <&gpio0 2  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
+                    <&gpio0 3  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
+                    <&gpio0 31 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        status = "okay";
+    };
+
+    /* 显示屏引脚定义（P0.17，仅占位，测试阶段无需驱动） */
+    display {
+        compatible = "generic-display";
+        label = "Test Display";
+        gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>;
+        status = "okay";
+    };
+};
