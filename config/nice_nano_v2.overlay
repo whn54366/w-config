@@ -1,82 +1,24 @@
-/* NICE NANO V2 直键+OLED 设备树（零语法错误版） */
-#include <dt-bindings/gpio/gpio.h>
+#include "mykeyboard.dtsi"
 
-/* 1. I2C0（OLED）引脚配置 */
-&pinctrl {
-    i2c0_default: i2c0_default {
-        group1 {
-            psels = <NRF_PSEL(TWIM_SDA, 0, 17)>, <NRF_PSEL(TWIM_SCL, 0, 20)>;
-        };
-    };
-};
-
-/* 2. 启用I2C0总线（OLED用） */
 &i2c0 {
+    compatible = "nordic,nrf-twi";
     status = "okay";
-    compatible = "nordic,nrf-twim";
     sda-pin = <17>;
     scl-pin = <20>;
-    clock-frequency = <400000>;
-};
-
-/* 3. OLED设备定义（0.96寸 SSD1306） */
-&i2c0 {
-    oled@3c {
+    
+    oled: ssd1306@3c {
         compatible = "solomon,ssd1306fb";
-        reg = <0x3C>;
+        reg = <0x3c>;
+        label = "DISPLAY";
         width = <128>;
-        height = <64>;
+        height = <32>;
         segment-offset = <0>;
         page-offset = <0>;
         display-offset = <0>;
-        multiplex-ratio = <63>;
-        segment-remap = <1>;
-        com-invdir = <1>;
-        com-seq = <0>;
-        internal-vcc;
-        status = "okay";
-    };
-};
-
-/* 4. 直键扫描+OLED显示（顶层节点） */
-/ {
-    chosen {
-        zmk,kscan = &kscan0;
-        zmk,display = &zmk_display;
-    };
-
-    /* 直键扫描配置（1键1GPIO，无矩阵） */
-    kscan0: kscan {
-        compatible = "zmk,kscan-gpio-direct";
-        debounce-press-ms = <20>;
-        debounce-release-ms = <20>;
-
-        /* 按键GPIO顺序：F7 F3 F1 D S W A FN1 FN2 I O P H J K L */
-        input-gpios = <
-            &gpio0 22 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio0 24 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio1  0 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio0 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio1  4 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio1  6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio1  1 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio1  2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio1  7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio0  9 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio0 10 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio1 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio1 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio1 15 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio0  2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP),
-            &gpio0 29 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)
-        >;
-    };
-
-    /* OLED显示配置 */
-    zmk_display: display {
-        compatible = "zmk,display";
-        status = "okay";
-        display-device = <&oled>;
-        refresh-ms = <1000>;
+        multiplex-ratio = <31>;
+        segment-remap;
+        com-invdir;
+        com-sequential;
+        prechargep = <0x22>;
     };
 };

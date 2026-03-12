@@ -1,18 +1,46 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/rgb.h>
 
 / {
-    keymap {
-        compatible = "zmk,keymap";
+    chosen {
+        zmk,display = &oled;
+    };
 
-        default_layer {
-            // 顺序 = overlay 里 input-gpios 的顺序
+    layers {
+        compatible = "zmk,layers";
+        
+        base_layer: layer_0 {
+            label = "BASE";
             bindings = <
-    &kp F7   &kp F3   &kp F1   &kp D
-    &kp S    &kp W    &kp A    &none
-    &none    &kp I    &kp O    &kp P
-    &kp H    &kp J    &kp K    &kp L
+                &kp F7     &kp F3     &kp F1     &kp D      &kp S
+                &kp W      &kp A      &none      &none      &kp I
+                &kp O      &kp P      &kp H      &kp J      &kp K
+                &kp L      &none      &none      &none      &none
             >;
+        };
+    };
+
+    oled_nodes {
+        compatible = "zmk,oled-segments";
+        display = <&oled>;
+        
+        segment_screen: oled_screen {
+            compatible = "zmk,oled-segment-screen";
+            width = <128>;
+            height = <32>;
+            
+            // 显示键盘层状态和电量
+            oled_text: oled_text {
+                compatible = "zmk,oled-segment-text";
+                x = <0>;
+                y = <0>;
+                width = <128>;
+                height = <32>;
+                font = "6x8";
+                text = <&layer_status &battery_status>;
+            };
         };
     };
 };
