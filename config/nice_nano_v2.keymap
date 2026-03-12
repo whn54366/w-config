@@ -12,11 +12,24 @@
 
         default_layer: layer_0 {
             label = "BASE";
+            // 顺序必须与 overlay 中的 input-gpios 一一对应
             bindings = <
-                &kp F7     &kp F3     &kp F1     &kp D      // 0-3
-                &kp S      &kp W      &kp A      &none      // 4-7 (功能键1)
-                &none      &kp I      &kp O      &kp P      // 8-11 (功能键2)
-                &kp H      &kp J      &kp K      &kp L      // 12-15
+                &kp F7            // position 0: F7
+                &kp F3            // position 1: F3
+                &kp F1            // position 2: F1
+                &kp D             // position 3: D
+                &kp S             // position 4: S
+                &kp W             // position 5: W
+                &kp A             // position 6: A
+                &none             // position 7: 功能键1 (暂无定义)
+                &none             // position 8: 功能键2 (暂无定义)
+                &kp I             // position 9: I
+                &kp O             // position 10: O
+                &kp P             // position 11: P
+                &kp H             // position 12: H
+                &kp J             // position 13: J
+                &kp K             // position 14: K
+                &kp L             // position 15: L
             >;
         };
     };

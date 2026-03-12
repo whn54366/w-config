@@ -1,6 +1,7 @@
 /*
  * nice_nano_v2.overlay
  * 直连按键 + SSD1306 OLED (使用默认 I2C 引脚)
+ * 按键顺序严格按照用户需求排列
  */
 
 #include <dt-bindings/zmk/keys.h>
