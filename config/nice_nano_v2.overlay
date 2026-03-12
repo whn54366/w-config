@@ -1,5 +1,6 @@
 /*
  * nice_nano_v2.overlay
+ * 直连按键 + SSD1306 OLED (使用默认I2C引脚)
  */
 
 #include <dt-bindings/zmk/keys.h>
@@ -14,31 +15,28 @@
         compatible = "zmk,kscan-gpio-direct";
         label = "KSCAN";
         input-gpios
-            = <&gpio0 22 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio0 24 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio1 0 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio0 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio1 4 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio1 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio1 1 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio1 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio1 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio0 9 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio0 10 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio1 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio1 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio1 15 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio0 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
-            , <&gpio0 29 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
+            = <&gpio0 22 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   // F7
+            , <&gpio0 24 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   // F3
+            , <&gpio1 0 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>    // F1
+            , <&gpio0 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   // D
+            , <&gpio1 4 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>    // S
+            , <&gpio1 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>    // W
+            , <&gpio1 1 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>    // A
+            , <&gpio1 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>    // 功能键1
+            , <&gpio1 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>    // 功能键2
+            , <&gpio0 9 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>    // I
+            , <&gpio0 10 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   // O
+            , <&gpio1 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   // P
+            , <&gpio1 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   // H
+            , <&gpio1 15 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   // J
+            , <&gpio0 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>    // K
+            , <&gpio0 29 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   // L
             ;
     };
 };
 
 &i2c0 {
-    compatible = "nordic,nrf-twi";
     status = "okay";
-    sda-pin = <17>;
-    scl-pin = <20>;
 
     oled: ssd1306@3c {
         compatible = "solomon,ssd1306fb";

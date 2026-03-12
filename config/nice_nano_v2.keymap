@@ -12,7 +12,6 @@
         
         base_layer: layer_0 {
             label = "BASE";
-            // 按键顺序必须与 .overlay 中的 input-gpios 顺序一致
             bindings = <
                 &kp F7     &kp F3     &kp F1     &kp D
                 &kp S      &kp W      &kp A      &none      // 功能键1
