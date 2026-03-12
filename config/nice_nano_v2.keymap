@@ -15,21 +15,10 @@
             // 按键顺序必须与 .overlay 中的 input-gpios 顺序一致
             bindings = <
                 &kp F7     &kp F3     &kp F1     &kp D
-                &kp S      &kp W      &kp A      &none      // 功能键1暂未定义
-                &none      &kp I      &kp O      &kp P      // 功能键2暂未定义
+                &kp S      &kp W      &kp A      &none      // 功能键1
+                &none      &kp I      &kp O      &kp P      // 功能键2
                 &kp H      &kp J      &kp K      &kp L
             >;
         };
-    };
-
-    // OLED 显示简单文本（当前层和电池电量）
-    oled_text: oled_text {
-        compatible = "zmk,oled-segment-text";
-        x = <0>;
-        y = <0>;
-        width = <128>;
-        height = <32>;
-        font = "6x8";
-        text = <&layer_status &battery_status>;
     };
 };
