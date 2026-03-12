@@ -1,0 +1,20 @@
+/* 复用定义：将按键IO映射到ZMK标准节点 */
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+    /* 功能键定义（无默认输出，仅占位） */
+    keys {
+        compatible = "zmk,keys";
+        func_key1: func_key1 {
+            label = "FUNCTION_KEY_1";
+            gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
+            bias-pull-up;
+        };
+        func_key2: func_key2 {
+            label = "FUNCTION_KEY_2";
+            gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
+            bias-pull-up;
+        };
+    };
+};

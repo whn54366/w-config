@@ -1,0 +1,26 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+
+/ {
+    keymap {
+        compatible = "zmk,keymap";
+
+        /* 基础层（默认层） */
+        default_layer {
+            bindings = <
+                /* 对应IO顺序：F7 F3 F1 D S W A 功能键1 功能键2 I O P H J K L */
+                &kp F7    &kp F3    &kp F1    &kp D     &kp S     &kp W     &kp A     &none     &none     &kp I     &kp O     &kp P     &kp H     &kp J     &kp K     &kp L
+            >;
+            /* 功能键1/2绑定&none（无输出），可后续修改为层切换/媒体键，例如：
+               &mo 1（切换到层1）、&kp VOLU（音量+）、&bt BT_NEXT（切换蓝牙设备） */
+        };
+
+        /* 可选：层1（功能层），由功能键1触发 */
+        layer_1 {
+            bindings = <
+                &kp ESC    &kp TAB    &kp BSPC   &kp ENT    &kp SPACE  &kp DEL    &kp BKSP   &none     &none     &kp PGUP   &kp PGDN   &kp HOME   &kp END    &kp UP     &kp LEFT   &kp RIGHT
+            >;
+        };
+    };
+};
