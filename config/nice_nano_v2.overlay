@@ -1,0 +1,77 @@
+/* NICE NANO V2 直键+0.96寸OLED | 符合ZMK官方Devicetree规范 */
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/i2c/i2c.h>
+
+/* 1. I2C0（OLED）引脚配置 | 官方Pinctrl规范 */
+&pinctrl {
+    i2c0_default: i2c0_default {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SDA, 0, 17)>, <NRF_PSEL(TWIM_SCL, 0, 20)>;
+        };
+    };
+};
+
+/* 2. 启用I2C0总线 | 官方NRF TWIM规范 */
+&i2c0 {
+    status = "okay";
+    compatible = "nordic,nrf-twim";
+    sda-pin = <17>;
+    scl-pin = <20>;
+    clock-frequency = <400000>; /* I2C快速模式，官方推荐 */
+
+    /* 3. SSD1306 OLED节点 | 挂载在I2C0下，补全所有官方必选属性 */
+    oled@3c {
+        compatible = "solomon,ssd1306fb";
+        reg = <0x3C>; /* 0.96寸OLED通用I2C地址 */
+        /* 官方7个必选属性（缺一不可） */
+        segment-offset = <0>;
+        page-offset = <0>;
+        display-offset = <0>;
+        multiplex-ratio = <63>;
+        prechargep = <255>; /* 官方必选，0.96寸OLED通用值 */
+        width = <128>;
+        height = <64>;
+        /* 官方可选属性 */
+        segment-remap = <1>;
+        com-invdir = <1>;
+        com-sequential = <0>;
+        use-internal-iref = <1>; /* 替换原错误的internal-vcc，官方标准 */
+        i2c-max-frequency = <400000>;
+        status = "okay";
+    };
+};
+
+/* 4. 顶层节点 | 直键驱动+Chosen节点配置 */
+/ {
+    chosen {
+        zmk,kscan = &kscan0; /* 直键扫描驱动 */
+        zephyr,display = &oled; /* 官方标准显示属性，指向OLED节点 */
+    };
+
+    /* 直键扫描驱动 | zmk,kscan-gpio-direct | 严格遵循官方语法 */
+    kscan0: kscan {
+        compatible = "zmk,kscan-gpio-direct";
+        /* 防抖配置，官方默认5ms，可自定义20ms */
+        debounce-press-ms = <20>;
+        debounce-release-ms = <20>;
+        /* 16个按键GPIO | 严格按(GPIO_ACTIVE_LOW | GPIO_PULL_UP)规范 */
+        input-gpios = <
+            &gpio0 22 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* Mode SW - 0.22 */
+            &gpio0 24 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* Player SW - 0.24 */
+            &gpio1  0 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* F1/F2 - 1.00 */
+            &gpio0 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* F3/F4 - 0.11 */
+            &gpio1  4 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* F7 - 1.04 */
+            &gpio1  6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* H/Z - 1.06 */
+            &gpio1  1 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* J/X - 1.01 */
+            &gpio1  2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* K/C - 1.02 */
+            &gpio1  7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* L/V - 1.07 */
+            &gpio0  9 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* P/Y - 0.09 */
+            &gpio0 10 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* O/T - 0.10 */
+            &gpio1 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* I/R - 1.11 */
+            &gpio1 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* S/DOWN - 1.13 */
+            &gpio1 15 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* W/UP - 1.15 */
+            &gpio0  2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP), /* A/LEFT - 0.02 */
+            &gpio0 29 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)  /* D/RIGHT - 0.29 */
+        >;
+    };
+};

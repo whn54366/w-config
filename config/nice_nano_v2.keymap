@@ -1,0 +1,41 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+
+/ {
+    keymap {
+        compatible = "zmk,keymap";
+
+        /* PLAYER 1 - FIGHT模式 */
+        default_layer {
+            display-name = "P1 FIGHT";
+            bindings = <
+                &mo 1   &none    &kp F1   &kp F3
+                &kp F7   &kp H    &kp J    &kp K
+                &kp L    &kp P    &kp O    &kp I
+                &kp S    &kp W    &kp A    &kp D
+            >;
+        };
+
+        /* PLAYER 2 - FIGHT模式 */
+        p2_layer {
+            display-name = "P2 FIGHT";
+            bindings = <
+                &mo 1   &none    &kp F2   &kp F4
+                &kp F7   &kp Z    &kp X    &kp C
+                &kp V    &kp Y    &kp T    &kp R
+                &kp DOWN &kp UP   &kp LEFT &kp RIGHT
+            >;
+        };
+
+        /* 模式切换层 */
+        mode_layer {
+            display-name = "Mode";
+            bindings = <
+                &none    &none    &none    &none
+                &none    &none    &none    &none
+                &none    &none    &none    &none
+                &none    &none    &none    &none
+            >;
+        };
+    };
+};
